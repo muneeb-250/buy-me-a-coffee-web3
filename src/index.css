@@ -55,6 +55,7 @@ button {
   font-family: inherit;
   background: linear-gradient(45deg, #f1b560, #91502a);
   cursor: pointer;
+  color: #fff;
 }
 
 button:hover {
@@ -102,5 +103,16 @@ form label {
 form button {
   display: block;
   margin: 12px auto;
-  /* width: 100%; */
+  color: #fff;
+}
+
+.fa-brands {
+  font-size: 32px;
+  background: -webkit-linear-gradient(45deg, #f1b560, #91502a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 12px;
+  cursor: pointer;
+  text-shadow: 2px 5px 10px rgba(0, 0, 0, 0.1);
 }

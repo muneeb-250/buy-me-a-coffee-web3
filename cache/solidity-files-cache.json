@@ -1,44 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "D:\\Blockchain\\RoadToWeb3\\2. Buy-me-a-coffee\\buy-me-a-coffee-web3\\contracts\\Lock.sol": {
-      "lastModificationDate": 1676628329641,
-      "contentHash": "ae66265769cc28ebdaa34881df95bc5e",
-      "sourceName": "contracts/Lock.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.9"
-      ],
-      "artifacts": [
-        "Lock"
-      ]
-    },
     "D:\\Blockchain\\RoadToWeb3\\2. Buy-me-a-coffee\\buy-me-a-coffee-web3\\contracts\\BuyMeACoffee.sol": {
-      "lastModificationDate": 1676631621240,
-      "contentHash": "dea2c04917f34aff6fd65d2ce24ebc3e",
+      "lastModificationDate": 1676713386113,
+      "contentHash": "d7fbc69fa0606a23f514e05b1a35a494",
       "sourceName": "contracts/BuyMeACoffee.sol",
       "solcConfig": {
         "version": "0.8.17",

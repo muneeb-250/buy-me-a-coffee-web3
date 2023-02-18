@@ -3,12 +3,13 @@
 pragma solidity ^0.8.7;
 
 contract BuyMeACoffee {
-    // deployed address: 0x05d064b13F85513FAe574891f066de0fb7Db88B6
+    // deployed address: 0x4223A3Edbe9a4c7459770E247865EE07272ec906
     // Event to emit when a Memo is created.
     event NewMemo(
         address indexed from,
         uint256 timestamp,
         string name,
+        string coffeeType,
         string message
     );
 
@@ -17,6 +18,7 @@ contract BuyMeACoffee {
         address from;
         uint256 timestamp;
         string name;
+        string coffeeType;
         string message;
     }
 
@@ -47,16 +49,19 @@ contract BuyMeACoffee {
      */
     function buyCoffee(
         string memory _name,
-        string memory _message
+        string memory _message,
+        string memory _coffeeType
     ) public payable {
         // Must accept more than 0 ETH for a coffee.
         require(msg.value > 0, "can't buy coffee for free!");
 
         // Add the memo to storage!
-        memos.push(Memo(msg.sender, block.timestamp, _name, _message));
+        memos.push(
+            Memo(msg.sender, block.timestamp, _name, _coffeeType, _message)
+        );
 
         // Emit a NewMemo event with details about the memo.
-        emit NewMemo(msg.sender, block.timestamp, _name, _message);
+        emit NewMemo(msg.sender, block.timestamp, _name, _coffeeType, _message);
     }
 
     /**
@@ -73,7 +78,17 @@ contract BuyMeACoffee {
     }
 
     //@challenge 2: Allow your smart contract to buyLargeCoffee for 0.003 ETH
-    function buyLargeCoffee() public payable {
+    function buyLargeCoffee(
+        string memory _name,
+        string memory _message,
+        string memory _coffeeType
+    ) public payable {
         require(msg.value == 0.003 ether, "only 0.003 ethers are requried");
+        memos.push(
+            Memo(msg.sender, block.timestamp, _name, _coffeeType, _message)
+        );
+
+        // Emit a NewMemo event with details about the memo.
+        emit NewMemo(msg.sender, block.timestamp, _name, _coffeeType, _message);
     }
 }

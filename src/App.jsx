@@ -5,13 +5,19 @@ import * as ethers from "ethers"
 import './App.css'
 import { parseEther } from 'ethers/lib/utils'
 function App() {
-  const contractAddress = '0x05d064b13F85513FAe574891f066de0fb7Db88B6';
+  const contractAddress = '0x4223A3Edbe9a4c7459770E247865EE07272ec906';
   const contractABI = abi.abi;
 
   const [CurrentAccount, setCurrentAccount] = useState();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [memos, setMemos] = useState([]);
+  const [newAddress, setNewAddress] = useState('');
+  const [owner, setOwner] = useState();
+
+  const formatAddress = addr => `${addr.slice(0, 5)}...${addr.slice(-4)}`
+
+
   const isWalletConnected = async () => {
     try {
       const { ethereum } = window;
@@ -61,6 +67,7 @@ function App() {
     const coffeeTxn = await buyMeACoffee.buyCoffee(
       name ? name : "anon",
       message ? message : "Enjoy your coffee!",
+      "Medium",
       { value: parseEther('0.001') }
     );
 
@@ -77,6 +84,9 @@ function App() {
       signer
     );
     const coffeeTxn = await buyMeACoffee.buyLargeCoffee(
+      name ? name : "anon",
+      message ? message : "Enjoy your coffee!",
+      "Large",
       { value: parseEther('0.003') }
     );
 
@@ -119,22 +129,97 @@ function App() {
         provider
       );
       const owner = await buyMeACoffee.owner();
-      console.log(owner);
+      setOwner(owner);
     }
   }
+  const updateAddress = async () => {
+    const { ethereum } = window;
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner()
+      const buyMeACoffee = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+      try {
+        const normalizedAddress = ethers.utils.getAddress(newAddress);
+        await buyMeACoffee.updateWithdraw(normalizedAddress);
+        console.log('Withdraw address updated successfully!');
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
+  }
+  const withdrawTips = async () => {
+    const { ethereum } = window;
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner()
+      const buyMeACoffee = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+      try {
+        await buyMeACoffee.withdrawTips();
+        console.log('Tips withdrew successfully!');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
   useEffect(() => {
+    let buyMeACoffee;
     isWalletConnected();
     getMemos();
+
+    // Create an event handler function for when someone sends
+    // us a new memo.
+    const onNewMemo = (from, timestamp, name, coffeeType, message) => {
+      console.log("Memo received: ", from, timestamp, name, coffeeType, message);
+      setMemos((prevState) => [
+        ...prevState,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message,
+          name
+        }
+      ]);
+    };
+
+    const { ethereum } = window;
+
+    // Listen for new memo events.
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum, "any");
+      const signer = provider.getSigner();
+      buyMeACoffee = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+
+      buyMeACoffee.on("NewMemo", onNewMemo);
+    }
+
+    return () => {
+      if (buyMeACoffee) {
+        buyMeACoffee.off("NewMemo", onNewMemo);
+      }
+    }
 
   }, [])
   return (
     <>    {
       CurrentAccount ? (
         <div className="App">
+
           <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
           <img src={coffeeImg} alt='coffee' />
-          <h3>Welcome {`${CurrentAccount.slice(0, 5)}...${CurrentAccount.slice(-4)}`} 👋</h3>
+          <h3>Welcome {formatAddress(CurrentAccount)} 👋</h3>
           <form onSubmit={e => { e.preventDefault() }}>
             <label htmlFor="name">Name</label>
             <input
@@ -143,7 +228,7 @@ function App() {
               placeholder="Your name.."
               onChange={e => setName(e.target.value)}
             />
-            <label htmlFor="name">Send Muneeb a message</label>
+            <label htmlFor="message">Send Muneeb a message</label>
             <input
               id="message"
               type="text"
@@ -162,7 +247,37 @@ function App() {
             >
               1 Large Coffee for 0.003ETH
             </button>
+            <button
+              type="button"
+              onClick={getOwner}
+            >
+              Get Owner Address
+            </button>
+            {
+              owner ? formatAddress(owner) : ""
+            }
+            <label htmlFor="withdraw">Change withdrawal address</label>
+            <input
+              id="withdraw"
+              type="text"
+              placeholder="address.."
+              value={newAddress}
+              onChange={e => setNewAddress(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={updateAddress}
+            >
+              Change Withdraw Address
+            </button>
+            <button
+              type="button"
+              onClick={withdrawTips}
+            >
+              Withdraw Tips
+            </button>
           </form>
+
         </div>
       ) : (
 
@@ -178,12 +293,23 @@ function App() {
 
       {CurrentAccount && (memos.map((memo, idx) => {
         return (
-          <div key={idx} style={{ border: "2px solid goldenrod", borderRadius: "5px", padding: "5px", margin: "5px", backgroundColor: 'white' }}>
+          <div key={idx} style={{ border: "3px solid goldenrod", borderRadius: "5px", padding: "5px", margin: "5px", backgroundColor: 'white' }}>
+            <p style={{ color: 'goldenrod', fontFamily: 'Berkshire swash', fontSize: '25px' }}>{memo.coffeeType} Coffee</p>
             <p style={{ "fontWeight": "bold" }}>"{memo.message}"</p>
             <p>From: {memo.name} at {memo.timestamp.toString()}</p>
           </div>
         )
       }))}
+      <br />
+      <a href="https://github.com/muneeb-250" target={'_blank'}>
+        <i className="fa-brands fa-github"></i>
+      </a>
+      <a href="https://twitter.com/0xmuneeb" target={'_blank'}>
+        <i className="fa-brands fa-twitter"></i>
+      </a>
+      <a href="https://linkedin.com/in/muneeburrehman250" target={'_blank'}>
+        <i className="fa-brands fa-linkedin"></i>
+      </a>
 
     </>
   )
