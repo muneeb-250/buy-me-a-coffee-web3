@@ -1,13 +1,13 @@
-import abi from '../artifacts/contracts/BuyMeACoffee.sol/BuyMeACoffee.json'
-import { useState, useEffect } from 'react'
+import { contractABI, contractAddress } from './utils/constants'
+import { useState, useEffect, useContext } from 'react'
 import coffeeImg from './assets/coffee.png'
 import * as ethers from "ethers"
 import './App.css'
 import { parseEther } from 'ethers/lib/utils'
-function App() {
-  const contractAddress = '0x4223A3Edbe9a4c7459770E247865EE07272ec906';
-  const contractABI = abi.abi;
+import { CoffeeContext } from './context/CoffeeContext'
 
+function App() {
+  const contract = useContext(CoffeeContext)
   const [CurrentAccount, setCurrentAccount] = useState();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -57,54 +57,53 @@ function App() {
 
   // smart contract functions 
   const buyCoffee = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum, "any");
-    const signer = provider.getSigner();
-    const buyMeACoffee = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      signer
-    );
-    const coffeeTxn = await buyMeACoffee.buyCoffee(
-      name ? name : "anon",
-      message ? message : "Enjoy your coffee!",
-      "Medium",
-      { value: parseEther('0.001') }
-    );
+    if (contract) {
+      try {
+        const coffeeTxn = await contract.buyCoffee(
+          name ? name : "anon",
+          message ? message : "Enjoy your coffee!",
+          "Medium",
+          { value: parseEther('0.001') }
+        );
+        await coffeeTxn.wait();
+        console.log("mined ", coffeeTxn.hash);
+        console.log("coffee purchased!");
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-    await coffeeTxn.wait();
-    console.log("mined ", coffeeTxn.hash);
-    console.log("coffee purchased!");
+
   }
   const buyLargeCoffee = async () => {
-    const provider = new ethers.providers.Web3Provider(ethereum, "any");
-    const signer = provider.getSigner();
-    const buyMeACoffee = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      signer
-    );
-    const coffeeTxn = await buyMeACoffee.buyLargeCoffee(
-      name ? name : "anon",
-      message ? message : "Enjoy your coffee!",
-      "Large",
-      { value: parseEther('0.003') }
-    );
+    if (contract) {
+      try {
+        const coffeeTxn = await contract.buyLargeCoffee(
+          name ? name : "anon",
+          message ? message : "Enjoy your coffee!",
+          "Large",
+          { value: parseEther('0.003') }
 
-    await coffeeTxn.wait();
-    console.log("mined ", coffeeTxn.hash);
-    console.log("coffee purchased!");
-  }
+        );
+        await coffeeTxn.wait();
+        console.log("mined ", coffeeTxn.hash);
+        console.log("coffee purchased!");
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const getMemos = async () => {
     try {
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
         const buyMeACoffee = new ethers.Contract(
           contractAddress,
           contractABI,
-          signer
+          provider
         );
 
         console.log("fetching memos from the blockchain..");
@@ -119,6 +118,7 @@ function App() {
       console.log(error);
     }
   };
+
   const getOwner = async () => {
     const { ethereum } = window;
     if (ethereum) {
@@ -133,45 +133,27 @@ function App() {
     }
   }
   const updateAddress = async () => {
-    const { ethereum } = window;
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner()
-      const buyMeACoffee = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
+    if (contract) {
       try {
         const normalizedAddress = ethers.utils.getAddress(newAddress);
-        await buyMeACoffee.updateWithdraw(normalizedAddress);
+        await contract.updateWithdraw(normalizedAddress);
         console.log('Withdraw address updated successfully!');
       } catch (error) {
         console.error(error);
       }
     }
-
-  }
+  };
   const withdrawTips = async () => {
-    const { ethereum } = window;
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner()
-      const buyMeACoffee = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
+    if (contract) {
       try {
-        await buyMeACoffee.withdrawTips();
+        await contract.withdrawTips();
         console.log('Tips withdrew successfully!');
       } catch (error) {
         console.error(error);
       }
     }
-  }
+  };
   useEffect(() => {
-    let buyMeACoffee;
     isWalletConnected();
     getMemos();
 
@@ -190,24 +172,14 @@ function App() {
       ]);
     };
 
-    const { ethereum } = window;
-
     // Listen for new memo events.
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum, "any");
-      const signer = provider.getSigner();
-      buyMeACoffee = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
+    if (contract) {
 
-      buyMeACoffee.on("NewMemo", onNewMemo);
+      contract.on("NewMemo", onNewMemo);
     }
-
     return () => {
-      if (buyMeACoffee) {
-        buyMeACoffee.off("NewMemo", onNewMemo);
+      if (contract) {
+        contract.off("NewMemo", onNewMemo);
       }
     }
 
