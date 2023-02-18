@@ -1,10 +1,9 @@
-import { contractABI, contractAddress } from './utils/constants'
 import { useState, useEffect, useContext } from 'react'
-import coffeeImg from './assets/coffee.png'
-import * as ethers from "ethers"
-import './App.css'
-import { parseEther } from 'ethers/lib/utils'
 import { CoffeeContext } from './context/CoffeeContext'
+import { contractABI, contractAddress } from './utils/constants'
+import * as ethers from "ethers"
+import { parseEther } from 'ethers/lib/utils'
+import coffeeImg from './assets/coffee.png'
 
 function App() {
   const contract = useContext(CoffeeContext)
@@ -16,7 +15,6 @@ function App() {
   const [owner, setOwner] = useState();
 
   const formatAddress = addr => `${addr.slice(0, 5)}...${addr.slice(-4)}`
-
 
   const isWalletConnected = async () => {
     try {
@@ -35,7 +33,6 @@ function App() {
       console.log("error: ", error);
     }
   }
-
 
   const connectWallet = async () => {
     try {
@@ -188,7 +185,6 @@ function App() {
     <>    {
       CurrentAccount ? (
         <div className="App">
-
           <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
           <img src={coffeeImg} alt='coffee' />
           <h3>Welcome {formatAddress(CurrentAccount)} 👋</h3>
@@ -249,16 +245,13 @@ function App() {
               Withdraw Tips
             </button>
           </form>
-
         </div>
       ) : (
-
         <div className="App">
           <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
           <img src={coffeeImg} alt='coffee' />
           <button style={{ margin: "2rem" }} onClick={() => connectWallet()}>Connect Wallet</button>
         </div>
-
       )
     }
       {CurrentAccount && (<h1>Memos received</h1>)}
