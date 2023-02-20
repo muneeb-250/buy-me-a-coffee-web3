@@ -254,9 +254,9 @@ function App() {
         </div>
       )
     }
-      {CurrentAccount && (<h1>Memos received</h1>)}
+      <h1>Memos received</h1>
 
-      {CurrentAccount && (memos.map((memo, idx) => {
+      {(memos.map((memo, idx) => {
         return (
           <div key={idx} style={{ border: "3px solid goldenrod", borderRadius: "5px", padding: "5px", margin: "5px", backgroundColor: 'white' }}>
             <p style={{ color: 'goldenrod', fontFamily: 'Berkshire swash', fontSize: '25px' }}>{memo.coffeeType} Coffee</p>
@@ -265,6 +265,7 @@ function App() {
           </div>
         )
       }))}
+
       <br />
       <a href="https://github.com/muneeb-250" target={'_blank'}>
         <i className="fa-brands fa-github"></i>
