@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { CoffeeContext } from './context/CoffeeContext'
 import { contractABI, contractAddress } from './utils/constants'
 import * as ethers from "ethers"
-import { parseEther } from 'ethers/lib/utils'
+import { parseEther, formatEther } from 'ethers/lib/utils'
 import coffeeImg from './assets/coffee.png'
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
   const [memos, setMemos] = useState([]);
   const [newAddress, setNewAddress] = useState('');
   const [owner, setOwner] = useState();
+  const [contractBalance, setContractBalance] = useState();
 
   const formatAddress = addr => `${addr.slice(0, 5)}...${addr.slice(-4)}`
 
@@ -126,7 +127,6 @@ function App() {
         provider
       );
       const owner = await buyMeACoffee.owner();
-      // console.log(owner.toLowerCase());
       setOwner(owner.toLowerCase());
     }
   }
@@ -154,10 +154,16 @@ function App() {
 
   const checkOwner = () => {
     getOwner();
-    console.log("owner", owner);
-    console.log("connected user:", CurrentAccount)
-    console.log(owner == CurrentAccount)
     return owner === CurrentAccount;
+  }
+
+  const checkBalance = async () => {
+    const { ethereum } = window;
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const balance = await provider.getBalance('0x4223A3Edbe9a4c7459770E247865EE07272ec906');
+      setContractBalance(formatEther(parseInt(balance._hex)));
+    }
   }
 
   useEffect(() => {
@@ -228,16 +234,8 @@ function App() {
               >
                 1 Large Coffee for 0.003ETH
               </button>
-              <button
-                type="button"
-                onClick={getOwner}
-              >
-                Get Owner Address
-              </button>
-              {
-                owner ? `Owner: ${formatAddress(owner)}` : ""
-              }
               {checkOwner() && (<>
+                <h4>Features just for owner</h4>
                 <label htmlFor="withdraw">Change withdrawal address</label>
                 <input
                   id="withdraw"
@@ -252,14 +250,19 @@ function App() {
                 >
                   Change Withdraw Address
                 </button>
+
+                <button
+                  type="button"
+                  onClick={withdrawTips}
+                >
+                  Withdraw Tips
+                </button>
+                <button type='button' onClick={checkBalance}>
+                  Check Balance
+                </button>
+                {contractBalance ? <p>Balance: {contractBalance} ETH</p> : ""}
               </>)}
 
-              <button
-                type="button"
-                onClick={withdrawTips}
-              >
-                Withdraw Tips
-              </button>
             </form>
           </div>
         ) : (
