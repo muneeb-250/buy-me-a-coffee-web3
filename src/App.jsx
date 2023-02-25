@@ -126,7 +126,8 @@ function App() {
         provider
       );
       const owner = await buyMeACoffee.owner();
-      setOwner(owner);
+      // console.log(owner.toLowerCase());
+      setOwner(owner.toLowerCase());
     }
   }
   const updateAddress = async () => {
@@ -150,6 +151,15 @@ function App() {
       }
     }
   };
+
+  const checkOwner = () => {
+    getOwner();
+    console.log("owner", owner);
+    console.log("connected user:", CurrentAccount)
+    console.log(owner == CurrentAccount)
+    return owner === CurrentAccount;
+  }
+
   useEffect(() => {
     isWalletConnected();
     getMemos();
@@ -182,79 +192,85 @@ function App() {
 
   }, [])
   return (
-    <>    {
-      CurrentAccount ? (
-        <div className="App">
-          <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
-          <img src={coffeeImg} alt='coffee' />
-          <h3>Welcome {formatAddress(CurrentAccount)} 👋</h3>
-          <form onSubmit={e => { e.preventDefault() }}>
-            <label htmlFor="name">Name</label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Your name.."
-              onChange={e => setName(e.target.value)}
-            />
-            <label htmlFor="message">Send Muneeb a message</label>
-            <input
-              id="message"
-              type="text"
-              placeholder="message.."
-              onChange={e => setMessage(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={buyCoffee}
-            >
-              1 Coffee for 0.001ETH
-            </button>
-            <button
-              type="button"
-              onClick={buyLargeCoffee}
-            >
-              1 Large Coffee for 0.003ETH
-            </button>
-            <button
-              type="button"
-              onClick={getOwner}
-            >
-              Get Owner Address
-            </button>
-            {
-              owner ? formatAddress(owner) : ""
-            }
-            <label htmlFor="withdraw">Change withdrawal address</label>
-            <input
-              id="withdraw"
-              type="text"
-              placeholder="address.."
-              value={newAddress}
-              onChange={e => setNewAddress(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={updateAddress}
-            >
-              Change Withdraw Address
-            </button>
-            <button
-              type="button"
-              onClick={withdrawTips}
-            >
-              Withdraw Tips
-            </button>
-          </form>
-        </div>
-      ) : (
-        <div className="App">
-          <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
-          <img src={coffeeImg} alt='coffee' />
-          <button style={{ margin: "2rem" }} onClick={() => connectWallet()}>Connect Wallet</button>
-        </div>
-      )
-    }
-      <h1>Memos received</h1>
+
+    <>
+      {
+        CurrentAccount ? (
+          <div className="App">
+            <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
+            <img src={coffeeImg} alt='coffee' />
+
+            <h3>Welcome {formatAddress(CurrentAccount)} 👋</h3>
+            <form onSubmit={e => { e.preventDefault() }}>
+              <label htmlFor="name">Name</label>
+              <input
+                id="name"
+                type="text"
+                placeholder="Your name.."
+                onChange={e => setName(e.target.value)}
+              />
+              <label htmlFor="message">Send Muneeb a message</label>
+              <input
+                id="message"
+                type="text"
+                placeholder="message.."
+                onChange={e => setMessage(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={buyCoffee}
+              >
+                1 Coffee for 0.001ETH
+              </button>
+              <button
+                type="button"
+                onClick={buyLargeCoffee}
+              >
+                1 Large Coffee for 0.003ETH
+              </button>
+              <button
+                type="button"
+                onClick={getOwner}
+              >
+                Get Owner Address
+              </button>
+              {
+                owner ? `Owner: ${formatAddress(owner)}` : ""
+              }
+              {checkOwner() && (<>
+                <label htmlFor="withdraw">Change withdrawal address</label>
+                <input
+                  id="withdraw"
+                  type="text"
+                  placeholder="address.."
+                  value={newAddress}
+                  onChange={e => setNewAddress(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={updateAddress}
+                >
+                  Change Withdraw Address
+                </button>
+              </>)}
+
+              <button
+                type="button"
+                onClick={withdrawTips}
+              >
+                Withdraw Tips
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="App">
+            <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
+            <img src={coffeeImg} alt='coffee' />
+            <button style={{ margin: "2rem" }} onClick={() => connectWallet()}>Connect Wallet</button>
+          </div>
+        )
+      }
+      {/* {checkOwner() && (<p>OWner here</p>)} */}
 
       {(memos.map((memo, idx) => {
         return (
