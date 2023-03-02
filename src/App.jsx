@@ -41,6 +41,7 @@ function App() {
 
       if (!ethereum) {
         console.log("please install MetaMask");
+        alert("please install MetaMask")
       }
 
       const accounts = await ethereum.request({
