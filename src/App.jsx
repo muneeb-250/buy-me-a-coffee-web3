@@ -95,22 +95,17 @@ function App() {
 
   const getMemos = async () => {
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const buyMeACoffee = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          provider
-        );
+      const provider = new ethers.providers.AlchemyProvider('goerli', import.meta.env.VITE_ALCHEMY_API_KEY);
+      const buyMeACoffee = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        provider
+      );
 
-        console.log("fetching memos from the blockchain..");
-        const memos = await buyMeACoffee.getMemos();
-        console.log("fetched!");
-        setMemos(memos);
-      } else {
-        console.log("Metamask is not connected");
-      }
+      console.log("fetching memos from the blockchain..");
+      const memos = await buyMeACoffee.getMemos();
+      console.log("fetched!");
+      setMemos(memos);
 
     } catch (error) {
       console.log(error);
