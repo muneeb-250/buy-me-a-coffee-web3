@@ -199,7 +199,7 @@ function App() {
       {
         CurrentAccount ? (
           <div className="App">
-            <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
+            <h1>Buy <span>Muneeb</span> a Coffee</h1>
             <img src={coffeeImg} alt='coffee' />
 
             <h3>Welcome {formatAddress(CurrentAccount)} 👋</h3>
