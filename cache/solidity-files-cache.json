@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\Blockchain\\RoadToWeb3\\2. Buy-me-a-coffee\\buy-me-a-coffee-web3\\contracts\\BuyMeACoffee.sol": {
-      "lastModificationDate": 1676713386113,
-      "contentHash": "d7fbc69fa0606a23f514e05b1a35a494",
+      "lastModificationDate": 1676713473546,
+      "contentHash": "caf582c8993c1f49946372f05fb744f0",
       "sourceName": "contracts/BuyMeACoffee.sol",
       "solcConfig": {
         "version": "0.8.17",

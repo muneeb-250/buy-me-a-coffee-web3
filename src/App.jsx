@@ -147,7 +147,6 @@ function App() {
       }
     }
   };
-
   const checkOwner = () => {
     getOwner();
     return owner === CurrentAccount;
@@ -265,7 +264,8 @@ function App() {
           <div className="App">
             <h1>Buy <span style={{ fontFamily: "Berkshire swash" }}>Muneeb</span> a Coffee</h1>
             <img src={coffeeImg} alt='coffee' />
-            <button style={{ margin: "2rem" }} onClick={() => connectWallet()}>Connect Wallet</button>
+            {window.ethereum ? <button style={{ margin: "2rem" }} onClick={() => connectWallet()}>Connect Wallet</button> : <button style={{ margin: "2rem" }} onClick={() => window.open('https://metamask.io/download.html', '_blank')}>Install MetaMask</button>}
+
           </div>
         )
       }
