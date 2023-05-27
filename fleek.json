@@ -1,0 +1,6 @@
+{
+  "id": "cli5pujr50000l308h2fi3tht",
+  "name": "coffee-web3",
+  "distDir": "dist",
+  "buildCommand": "yarn build"
+}
