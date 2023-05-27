@@ -4,6 +4,8 @@ The Buy Me a Coffee Web3 dApp is a decentralized application that allows visitor
 
 You can try out the app here: https://buy-muneeb-a-coffee-web3.netlify.app/.
 
+Recently I deployed the site on IPFS using Fleek, here's link: https://ipfs.io/ipfs/QmY8txAHbAPP5XkxYYaWvr52yVNZvZhDsVTorH5s3jMvt6
+
 ## Features
 
 - Visitors can send you (fake) ETH as tips and leave nice messages.
